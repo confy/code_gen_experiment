@@ -2,7 +2,7 @@
 #include "CalibrationGroup.h"
 
 /**
-    * @file FrownCal.hpp
+    * @file FrownCal.h
     * @brief Frown correction parameters
     */
 

@@ -1,8 +1,10 @@
 
+
+
 #pragma once
-#include "CalibrationGroup.hpp"
-#include "SystemVersion.hpp"
-#include "FrownCal.hpp"
+#include "CalibrationGroup.h"
+#include "SystemVersion.h"
+#include "FrownCal.h"
 
 #pragma pack(push, 1)
 struct ProductCalibration : public CalibrationGroup {

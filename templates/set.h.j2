@@ -1,14 +1,16 @@
 
+
+
 #pragma once
-#include "CalibrationGroup.hpp"
+#include "CalibrationGroup.h"
 {% for m in group.fields %}
-#include "{{ m.name_camel }}.hpp"
+#include "{{ m.name_camel }}.h"
 {% endfor %}
 
 #pragma pack(push, 1)
 struct {{ group.name_camel }} : public CalibrationGroup {
     {% for m in group.fields %}
-    {{ m.name_camel }} {{ m.name_camel[0]|lower + m.name_camel[1:] }};
+    {{ m.name_camel }} {{ m.name_member }};
     {% endfor %}
 };
 #pragma pack(pop)

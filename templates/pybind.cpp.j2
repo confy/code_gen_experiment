@@ -2,7 +2,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <cstring>
-#include "{{ group.name_camel }}.hpp"
+#include "{{ group.name_camel }}.h"
 
 namespace py = pybind11;
 
@@ -12,16 +12,16 @@ void bind_{{ group.name_snake }}(py::module &m) {
 
     {% for field in group.fields %}
     {% if field.size %}
-    cls.def_property("{{ field.name_snake }}",
-        [](const {{ group.name_camel }} &self) {
-            return std::vector<float>(self.{{ field.name_camel }}, self.{{ field.name_camel }} + {{ field.size }});
-        },
-        []({{ group.name_camel }} &self, const std::vector<float> &v) {
-            if (v.size() != {{ field.size }}) throw py::value_error("Expected size {{ field.size }}");
-            std::memcpy(self.{{ field.name_camel }}, v.data(), {{ field.size }} * sizeof(float));
-        }, "{{ field.doc }}");
+        cls.def_property("{{ field.name_snake }}",
+            [](const {{ group.name_camel }} &self) {
+                return std::vector<float>(self.{{ field.name_member }}, self.{{ field.name_member }} + {{ field.size }});
+            },
+            []({{ group.name_camel }} &self, const std::vector<float> &v) {
+                if (v.size() != {{ field.size }}) throw py::value_error("Expected size {{ field.size }}");
+                std::memcpy(self.{{ field.name_member }}, v.data(), {{ field.size }} * sizeof(float));
+            }, "{{ field.doc }}");
     {% else %}
-    cls.def_readwrite("{{ field.name_snake }}", &{{ group.name_camel }}::{{ field.name_camel }}, "{{ field.doc }}");
+    cls.def_readwrite("{{ field.name_snake }}", &{{ group.name_camel }}::{{ field.name_member }}, "{{ field.doc }}");
     {% endif %}
     {% endfor %}
 

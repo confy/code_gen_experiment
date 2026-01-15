@@ -2,7 +2,7 @@
 #include "CalibrationGroup.h"
 
 /**
-    * @file SystemVersion.hpp
+    * @file SystemVersion.h
     * @brief System version information
     */
 

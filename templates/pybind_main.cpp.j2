@@ -1,0 +1,11 @@
+// Auto-generated main pybind11 module file
+#include <pybind11/pybind11.h>
+{% for group in all_groups %}
+void bind_{{ group.name_snake }}(pybind11::module&);
+{% endfor %}
+
+PYBIND11_MODULE(calib_pybind, m) {
+{% for group in all_groups %}
+    bind_{{ group.name_snake }}(m);
+{% endfor %}
+}

@@ -2,16 +2,16 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <cstring>
-#include "ProductCalibration.hpp"
+#include "ProductCalibration.h"
 
 namespace py = pybind11;
 
-void bind_(py::module &m) {
-    auto cls = py::class_<ProductCalibration, CalibrationGroup>(m, "", R"pbdoc(Product specific calibration data)pbdoc");
+void bind_product_calibration(py::module &m) {
+    auto cls = py::class_<ProductCalibration, CalibrationGroup>(m, "product_calibration", R"pbdoc(Product specific calibration data)pbdoc");
     cls.def(py::init<>());
 
-    cls.def_readwrite("SystemVersion", &ProductCalibration::SystemVersion, "System version information");
-    cls.def_readwrite("FrownCal", &ProductCalibration::FrownCal, "Frown correction parameters");
+    cls.def_readwrite("SystemVersion", &ProductCalibration::systemVersion, "System version information");
+    cls.def_readwrite("FrownCal", &ProductCalibration::frownCal, "Frown correction parameters");
 
     cls.def("to_bytes", [](const ProductCalibration& self) {
         return py::bytes(reinterpret_cast<const char*>(&self), sizeof(ProductCalibration));
