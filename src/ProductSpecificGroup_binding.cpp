@@ -2,8 +2,11 @@
 #include <pybind11/stl.h>
 #include <cstring>
 #include "ProductSpecificGroup.h"
+#include <json.hpp>
+#include <string>
 
 namespace py = pybind11;
+using json = nlohmann::json;
 
 void bind_product_specific_group(py::module &m) {
     auto cls = py::class_<ProductSpecificGroup, CalibrationGroup>(m, "product_specific_group", R"pbdoc(Product specific group)pbdoc");
@@ -29,5 +32,15 @@ void bind_product_specific_group(py::module &m) {
         ProductSpecificGroup obj;
         std::memcpy(&obj, s.data(), sizeof(ProductSpecificGroup));
         return obj;
+    });
+
+    cls.def("to_json_string", [](const ProductSpecificGroup& self) {
+        json j = self;
+        return j.dump();
+    });
+
+    cls.def_static("from_json_string", [](const std::string& json_string) {
+        auto j = json::parse(json_string);
+        return j.get<ProductSpecificGroup>();
     });
 }

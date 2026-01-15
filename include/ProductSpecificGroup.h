@@ -1,19 +1,31 @@
 #pragma once
+
 #include "CalibrationGroup.h"
+#include <json.hpp>
+#include <vector>
+#include <algorithm>
+#include <stdexcept>
 
-/**
-    * @file ProductSpecificGroup.h
-    * @brief Product specific group
-    */
+using json = nlohmann::json;
 
-
-/** THIS FILE IS AUTO-GENERATED. DO NOT EDIT. */
-
-#pragma pack(push, 1)
 struct ProductSpecificGroup : public CalibrationGroup {
-    /** A test field */
-    float testField;
-    /** A test array */
+    float testField = 0;
     float testArray[10];
+
+    ProductSpecificGroup() = default;
+    ~ProductSpecificGroup() = default;
 };
-#pragma pack(pop)
+
+inline void to_json(json& j, const ProductSpecificGroup& p) {
+    j = json{
+        {"test_field", p.testField},        {"test_array", p.testArray}    };
+}
+
+inline void from_json(const json& j, ProductSpecificGroup& p) {
+    j.at("test_field").get_to(p.testField);
+    const auto& test_array_json = j.at("test_array");
+    if (test_array_json.size() != 10) {
+        throw std::runtime_error("Incorrect array size for test_array");
+    }
+    std::copy(test_array_json.begin(), test_array_json.end(), p.testArray);
+}

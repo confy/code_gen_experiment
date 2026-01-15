@@ -2,8 +2,11 @@
 #include <pybind11/stl.h>
 #include <cstring>
 #include "ProductCalibration.h"
+#include <json.hpp>
+#include <string>
 
 namespace py = pybind11;
+using json = nlohmann::json;
 
 void bind_product_calibration(py::module &m) {
     auto cls = py::class_<ProductCalibration, CalibrationGroup>(m, "product_calibration", R"pbdoc(Product specific calibration data)pbdoc");
@@ -23,5 +26,15 @@ void bind_product_calibration(py::module &m) {
         ProductCalibration obj;
         std::memcpy(&obj, s.data(), sizeof(ProductCalibration));
         return obj;
+    });
+
+    cls.def("to_json_string", [](const ProductCalibration& self) {
+        json j = self;
+        return j.dump();
+    });
+
+    cls.def_static("from_json_string", [](const std::string& json_string) {
+        auto j = json::parse(json_string);
+        return j.get<ProductCalibration>();
     });
 }

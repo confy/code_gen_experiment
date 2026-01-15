@@ -2,8 +2,11 @@
 #include <pybind11/stl.h>
 #include <cstring>
 #include "FrownCal.h"
+#include <json.hpp>
+#include <string>
 
 namespace py = pybind11;
+using json = nlohmann::json;
 
 void bind_frown_cal(py::module &m) {
     auto cls = py::class_<FrownCal, CalibrationGroup>(m, "frown_cal", R"pbdoc(Frown correction parameters)pbdoc");
@@ -28,5 +31,15 @@ void bind_frown_cal(py::module &m) {
         FrownCal obj;
         std::memcpy(&obj, s.data(), sizeof(FrownCal));
         return obj;
+    });
+
+    cls.def("to_json_string", [](const FrownCal& self) {
+        json j = self;
+        return j.dump();
+    });
+
+    cls.def_static("from_json_string", [](const std::string& json_string) {
+        auto j = json::parse(json_string);
+        return j.get<FrownCal>();
     });
 }

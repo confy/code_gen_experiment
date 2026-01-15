@@ -2,8 +2,11 @@
 #include <pybind11/stl.h>
 #include <cstring>
 #include "SystemVersion.h"
+#include <json.hpp>
+#include <string>
 
 namespace py = pybind11;
+using json = nlohmann::json;
 
 void bind_system_version(py::module &m) {
     auto cls = py::class_<SystemVersion, CalibrationGroup>(m, "system_version", R"pbdoc(System version information)pbdoc");
@@ -22,5 +25,15 @@ void bind_system_version(py::module &m) {
         SystemVersion obj;
         std::memcpy(&obj, s.data(), sizeof(SystemVersion));
         return obj;
+    });
+
+    cls.def("to_json_string", [](const SystemVersion& self) {
+        json j = self;
+        return j.dump();
+    });
+
+    cls.def_static("from_json_string", [](const std::string& json_string) {
+        auto j = json::parse(json_string);
+        return j.get<SystemVersion>();
     });
 }

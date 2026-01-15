@@ -1,17 +1,29 @@
 #pragma once
+
 #include "CalibrationGroup.h"
+#include <json.hpp>
+#include <vector>
+#include <algorithm>
+#include <stdexcept>
 
-/**
-    * @file FrownCal.h
-    * @brief Frown correction parameters
-    */
+using json = nlohmann::json;
 
-
-/** THIS FILE IS AUTO-GENERATED. DO NOT EDIT. */
-
-#pragma pack(push, 1)
 struct FrownCal : public CalibrationGroup {
-    /** Frown correction map */
     float mapping[192];
+
+    FrownCal() = default;
+    ~FrownCal() = default;
 };
-#pragma pack(pop)
+
+inline void to_json(json& j, const FrownCal& p) {
+    j = json{
+        {"mapping", p.mapping}    };
+}
+
+inline void from_json(const json& j, FrownCal& p) {
+    const auto& mapping_json = j.at("mapping");
+    if (mapping_json.size() != 192) {
+        throw std::runtime_error("Incorrect array size for mapping");
+    }
+    std::copy(mapping_json.begin(), mapping_json.end(), p.mapping);
+}

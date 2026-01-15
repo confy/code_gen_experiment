@@ -1,19 +1,27 @@
 #pragma once
+
 #include "CalibrationGroup.h"
+#include <json.hpp>
+#include <vector>
+#include <algorithm>
+#include <stdexcept>
 
-/**
-    * @file SystemVersion.h
-    * @brief System version information
-    */
+using json = nlohmann::json;
 
-
-/** THIS FILE IS AUTO-GENERATED. DO NOT EDIT. */
-
-#pragma pack(push, 1)
 struct SystemVersion : public CalibrationGroup {
-    /** Major version */
-    float major;
-    /** Minor version */
-    float minor;
+    float major = 0;
+    float minor = 0;
+
+    SystemVersion() = default;
+    ~SystemVersion() = default;
 };
-#pragma pack(pop)
+
+inline void to_json(json& j, const SystemVersion& p) {
+    j = json{
+        {"major", p.major},        {"minor", p.minor}    };
+}
+
+inline void from_json(const json& j, SystemVersion& p) {
+    j.at("major").get_to(p.major);
+    j.at("minor").get_to(p.minor);
+}
