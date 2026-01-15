@@ -5,7 +5,7 @@
 
 namespace py = pybind11;
 
-void bind_{{ group.name_snake }}(py::module &m) {
+void {{ group.binding_func | default('bind_' + group.name_snake) }}(py::module &m) {
     auto cls = py::class_<{{ group.name_camel }}, CalibrationGroup>(m, "{{ group.name_snake }}", R"pbdoc({{ group.doc }})pbdoc");
     cls.def(py::init<>());
 

@@ -5,8 +5,8 @@
 
 namespace py = pybind11;
 
-void bind_(py::module &m) {
-    auto cls = py::class_<SystemVersion, CalibrationGroup>(m, "", R"pbdoc(System version information)pbdoc");
+void bind_system_version(py::module &m) {
+    auto cls = py::class_<SystemVersion, CalibrationGroup>(m, "system_version", R"pbdoc(System version information)pbdoc");
     cls.def(py::init<>());
 
     cls.def_readwrite("major", &SystemVersion::major, "Major version");

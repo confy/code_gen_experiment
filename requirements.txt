@@ -1,0 +1,3 @@
+jinja2
+pybind11[global]
+pyyaml

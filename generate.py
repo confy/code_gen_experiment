@@ -97,8 +97,13 @@ def generate():
         # Explicitly generate group header and binding for every group
         with open(f"include/{item['name_camel']}.h", 'w') as f:
             f.write(env.get_template('group.h.j2').render(group=item))
+        # Ensure name_snake is set before using it
+        name_snake = to_snake_case(item['name'])
+        binding_group = item.copy()
+        binding_group['name_snake'] = name_snake
+        binding_group['binding_func'] = f"bind_{name_snake}"
         with open(f"src/{item['name_camel']}_binding.cpp", 'w') as f:
-            f.write(env.get_template('pybind.cpp.j2').render(group=item))
+            f.write(env.get_template('pybind.cpp.j2').render(group=binding_group))
 
     # Generate code for each top-level calibration group except 'groups' (sets)
     for key, value in data.items():

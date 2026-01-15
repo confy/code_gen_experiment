@@ -1,4 +1,9 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+
+/** THIS FILE IS AUTO-GENERATED. DO NOT EDIT. */
+
+
 void bind_system_version(pybind11::module&);
 void bind_frown_cal(pybind11::module&);
 void bind_product_specific_group(pybind11::module&);

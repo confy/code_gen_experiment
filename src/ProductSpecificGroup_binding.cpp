@@ -5,8 +5,8 @@
 
 namespace py = pybind11;
 
-void bind_(py::module &m) {
-    auto cls = py::class_<ProductSpecificGroup, CalibrationGroup>(m, "", R"pbdoc(Product specific group)pbdoc");
+void bind_product_specific_group(py::module &m) {
+    auto cls = py::class_<ProductSpecificGroup, CalibrationGroup>(m, "product_specific_group", R"pbdoc(Product specific group)pbdoc");
     cls.def(py::init<>());
 
     cls.def_readwrite("test_field", &ProductSpecificGroup::testField, "A test field");

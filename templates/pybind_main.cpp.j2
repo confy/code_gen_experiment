@@ -1,4 +1,9 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+
+/** THIS FILE IS AUTO-GENERATED. DO NOT EDIT. */
+
+
 {% for group in all_groups %}
 void bind_{{ group.name_snake }}(pybind11::module&);
 {% endfor %}
