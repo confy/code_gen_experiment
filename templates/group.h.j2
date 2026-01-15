@@ -1,24 +1,45 @@
 #pragma once
+
 #include "CalibrationGroup.h"
+#include <json.hpp>
+#include <vector>
+#include <algorithm>
+#include <stdexcept>
 
-/**
-    * @file {{ group.name }}.h
-    * @brief {{ group.doc }}
-    */
+using json = nlohmann::json;
 
-
-/** THIS FILE IS AUTO-GENERATED. DO NOT EDIT. */
-
-#pragma pack(push, 1)
 struct {{ group.name_camel }} : public CalibrationGroup {
     {% for field in group.fields %}
-    /** {{ field.doc }} */
     {% if field.size %}
-    float {{ field.name_camel }}[{{ field.size }}];
+    {{ field.type }} {{ field.name_member }}[{{ field.size }}];
     {% else %}
-    float {{ field.name_camel }};
+    {{ field.type }} {{ field.name_member }} = 0;
     {% endif %}
     {% endfor %}
+
+    {{ group.name_camel }}() = default;
+    ~{{ group.name_camel }}() = default;
 };
-#pragma pack(pop)
+
+inline void to_json(json& j, const {{ group.name_camel }}& p) {
+    j = json{
+        {% for field in group.fields %}
+        {"{{ field.name_snake }}", p.{{ field.name_member }}}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+}
+
+inline void from_json(const json& j, {{ group.name_camel }}& p) {
+    {% for field in group.fields %}
+    {% if field.size %}
+    const auto& {{ field.name_snake }}_json = j.at("{{ field.name_snake }}");
+    if ({{ field.name_snake }}_json.size() != {{ field.size }}) {
+        throw std::runtime_error("Incorrect array size for {{ field.name_snake }}");
+    }
+    std::copy({{ field.name_snake }}_json.begin(), {{ field.name_snake }}_json.end(), p.{{ field.name_member }});
+    {% else %}
+    j.at("{{ field.name_snake }}").get_to(p.{{ field.name_member }});
+    {% endif %}
+    {% endfor %}
+}
 

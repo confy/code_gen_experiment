@@ -2,8 +2,11 @@
 #include <pybind11/stl.h>
 #include <cstring>
 #include "{{ group.name_camel }}.h"
+#include <json.hpp>
+#include <string>
 
 namespace py = pybind11;
+using json = nlohmann::json;
 
 void {{ group.binding_func | default('bind_' + group.name_snake) }}(py::module &m) {
     auto cls = py::class_<{{ group.name_camel }}, CalibrationGroup>(m, "{{ group.name_snake }}", R"pbdoc({{ group.doc }})pbdoc");
@@ -34,5 +37,15 @@ void {{ group.binding_func | default('bind_' + group.name_snake) }}(py::module &
         {{ group.name_camel }} obj;
         std::memcpy(&obj, s.data(), sizeof({{ group.name_camel }}));
         return obj;
+    });
+
+    cls.def("to_json_string", [](const {{ group.name_camel }}& self) {
+        json j = self;
+        return j.dump();
+    });
+
+    cls.def_static("from_json_string", [](const std::string& json_string) {
+        auto j = json::parse(json_string);
+        return j.get<{{ group.name_camel }}>();
     });
 }

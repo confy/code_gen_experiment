@@ -3,6 +3,7 @@ project(CalibrationCodeGen LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Find Python and pybind11
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
@@ -30,6 +31,7 @@ file(GLOB GENERATED_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 add_library(calib_codegen STATIC ${GENERATED_SRC} ${GENERATED_HEADERS})
 add_dependencies(calib_codegen generate_calib_code)
 target_include_directories(calib_codegen PUBLIC include)
+target_include_directories(calib_codegen PUBLIC vendor)
 target_link_libraries(calib_codegen PUBLIC pybind11::pybind11)
 
 

@@ -1,8 +1,11 @@
 #pragma once
 #include "CalibrationGroup.h"
+#include <json.hpp>
 {% for m in group.fields %}
 #include "{{ m.name_camel }}.h"
 {% endfor %}
+
+using json = nlohmann::json;
 
 #pragma pack(push, 1)
 struct {{ group.name_camel }} : public CalibrationGroup {
@@ -11,3 +14,17 @@ struct {{ group.name_camel }} : public CalibrationGroup {
     {% endfor %}
 };
 #pragma pack(pop)
+
+inline void to_json(json& j, const {{ group.name_camel }}& p) {
+    j = json{
+        {% for m in group.fields %}
+        {"{{ m.name_snake }}", p.{{ m.name_member }}}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+}
+
+inline void from_json(const json& j, {{ group.name_camel }}& p) {
+    {% for m in group.fields %}
+    j.at("{{ m.name_snake }}").get_to(p.{{ m.name_member }});
+    {% endfor %}
+}
