@@ -4,7 +4,7 @@ from jinja2 import Environment, FileSystemLoader
 
 import re
 def to_snake_case(name):
-    """Convert CamelCase or PascalCase to snake_case."""
+    """Convert CamelCase to snake_case."""
     return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
 
 def snake_to_camel(name):
@@ -44,8 +44,19 @@ def generate_group_files(env, group, is_set):
 def generate():
     env = Environment(loader=FileSystemLoader('templates'), trim_blocks=True, lstrip_blocks=True)
 
-    with open('calibration.yaml', 'r') as f:
-        data = yaml.safe_load(f)
+    # Concatenate all YAMLs in definitions/ for cross-file anchors
+    import glob
+    yaml_files = glob.glob('definitions/*.yaml')
+    # Ensure groups.yaml is first
+    yaml_files = sorted(yaml_files, key=lambda x: (not x.endswith('groups.yaml'), x))
+    yaml_text = ''
+    for yf in yaml_files:
+        with open(yf, 'r') as f:
+            yaml_text += f.read() + '\n'
+    print(f'Loaded YAML from: {yaml_files}')
+    print('YAML Content:')
+    print(yaml_text)
+    data = yaml.safe_load(yaml_text)
 
     print('Groups:')
     for group in data['groups']:
@@ -54,18 +65,20 @@ def generate():
     os.makedirs('include', exist_ok=True)
     os.makedirs('src', exist_ok=True)
 
-
     all_groups = []
-    # Generate code for each group
+    group_structs = []
     for item in data['groups']:
         is_set = item.get('is_set', False)
-        generate_group_files(env, item, is_set)
+        item['name_camel'] = snake_to_camel(item['name'])
+        item['fields'] = process_fields(item.get('fields', []))
+        struct_code = env.get_template('group_struct.j2').render(group=item)
+        group_structs.append(struct_code.strip())
         all_groups.append({
             'name_snake': to_snake_case(item['name']),
             'name_camel': snake_to_camel(item['name'])
         })
 
-    # Generate code for each top-level calibration group except 'groups'
+    # Generate code for each top-level calibration group except 'groups' (sets)
     for key, value in data.items():
         if key == 'groups':
             continue
@@ -77,6 +90,10 @@ def generate():
                 'name_snake': to_snake_case(entry['name']),
                 'name_camel': snake_to_camel(entry['name'])
             })
+
+    # Generate CalibrationGroups.h with all group structs
+    with open('include/CalibrationGroups.h', 'w') as f:
+        f.write(env.get_template('CalibrationGroups.h.j2').render(group_structs=group_structs))
 
     # Generate main pybind module file
     with open('src/calib_pybind.cpp', 'w') as f:

@@ -1,4 +1,3 @@
-// Auto-generated main pybind11 module file
 #include <pybind11/pybind11.h>
 void bind_system_version(pybind11::module&);
 void bind_frown_cal(pybind11::module&);

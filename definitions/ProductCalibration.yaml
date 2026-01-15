@@ -1,0 +1,6 @@
+ProductCalibration:
+  - name: ProductCalibration
+    doc: Product specific calibration data
+    members:
+      - *SystemVersion
+      - *FrownCal

@@ -1,0 +1,11 @@
+/** {{ group.doc }} */
+struct {{ group.name_camel }} : public CalibrationGroup {
+    {% for field in group.fields %}
+    /** {{ field.doc }} */
+    {% if field.size %}
+    float {{ field.name_camel }}[{{ field.size }}];
+    {% else %}
+    float {{ field.name_camel }};
+    {% endif %}
+    {% endfor %}
+};
