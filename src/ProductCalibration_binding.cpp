@@ -11,6 +11,7 @@ void bind_product_calibration(py::module &m) {
 
     cls.def_readwrite("SystemVersion", &ProductCalibration::systemVersion, "System version information");
     cls.def_readwrite("FrownCal", &ProductCalibration::frownCal, "Frown correction parameters");
+    cls.def_readwrite("ProductSpecificGroup", &ProductCalibration::productSpecificGroup, "Product specific group");
 
     cls.def("to_bytes", [](const ProductCalibration& self) {
         return py::bytes(reinterpret_cast<const char*>(&self), sizeof(ProductCalibration));

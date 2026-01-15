@@ -22,4 +22,12 @@ struct FrownCal : public CalibrationGroup {
     /** Frown correction map */
     float mapping[192];
 };
+
+/** Product specific group */
+struct ProductSpecificGroup : public CalibrationGroup {
+    /** A test field */
+    float testField;
+    /** A test array */
+    float testArray[10];
+};
 #pragma pack(pop)

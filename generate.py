@@ -56,7 +56,24 @@ def generate():
     print(f'Loaded YAML from: {yaml_files}')
     print('YAML Content:')
     print(yaml_text)
-    data = yaml.safe_load(yaml_text)
+    try:
+        data = yaml.safe_load(yaml_text)
+    except Exception as e:
+        print(f"YAML load error: {e}")
+        data = {}
+
+    # Merge any product-specific group lists (e.g., product_groups) into 'groups', always preserving groups.yaml
+    merged_groups = []
+    if data and 'groups' in data:
+        merged_groups.extend(data['groups'])
+    if data:
+        for key in list(data.keys()):
+            if key.endswith('_groups') and key != 'groups':
+                merged_groups.extend(data[key])
+                del data[key]
+        data['groups'] = merged_groups
+    else:
+        data = {'groups': []}
 
     print('Groups:')
     for group in data['groups']:
@@ -77,6 +94,11 @@ def generate():
             'name_snake': to_snake_case(item['name']),
             'name_camel': snake_to_camel(item['name'])
         })
+        # Explicitly generate group header and binding for every group
+        with open(f"include/{item['name_camel']}.h", 'w') as f:
+            f.write(env.get_template('group.h.j2').render(group=item))
+        with open(f"src/{item['name_camel']}_binding.cpp", 'w') as f:
+            f.write(env.get_template('pybind.cpp.j2').render(group=item))
 
     # Generate code for each top-level calibration group except 'groups' (sets)
     for key, value in data.items():

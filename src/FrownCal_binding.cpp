@@ -1,4 +1,3 @@
-
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <cstring>
@@ -6,8 +5,8 @@
 
 namespace py = pybind11;
 
-void bind_frown_cal(py::module &m) {
-    auto cls = py::class_<FrownCal, CalibrationGroup>(m, "frown_cal", R"pbdoc(Frown correction parameters)pbdoc");
+void bind_(py::module &m) {
+    auto cls = py::class_<FrownCal, CalibrationGroup>(m, "", R"pbdoc(Frown correction parameters)pbdoc");
     cls.def(py::init<>());
 
         cls.def_property("mapping",

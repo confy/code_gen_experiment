@@ -1,6 +1,14 @@
+product_groups:
+  - &ProductSpecificGroup
+    name: ProductSpecificGroup
+    doc: Product specific group
+    fields:
+      - { name: "test_field", type: "float", doc: "A test field" }
+      - { name: "test_array", type: "float", size: 10, doc: "A test array" }
 ProductCalibration:
   - name: ProductCalibration
     doc: Product specific calibration data
     members:
       - *SystemVersion
       - *FrownCal
+      - *ProductSpecificGroup

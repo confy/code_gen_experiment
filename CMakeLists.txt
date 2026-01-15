@@ -14,7 +14,8 @@ add_custom_target(generate_calib_code ALL
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS
         ${CMAKE_CURRENT_SOURCE_DIR}/generate.py
-        ${CMAKE_CURRENT_SOURCE_DIR}/definitions/*.yaml
+        ${CMAKE_CURRENT_SOURCE_DIR}/definitions/groups.yaml
+        ${CMAKE_CURRENT_SOURCE_DIR}/definitions/ProductCalibration.yaml
         ${CMAKE_CURRENT_SOURCE_DIR}/templates/group.h.j2
         ${CMAKE_CURRENT_SOURCE_DIR}/templates/set.h.j2
         ${CMAKE_CURRENT_SOURCE_DIR}/templates/pybind.cpp.j2
